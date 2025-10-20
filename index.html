@@ -1,25 +1,86 @@
 <!DOCTYPE html>
 <html lang="fa">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Zoom</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <h2>افکت زوم روی تصویر</h2>
-    <div class="img-zoom-container">
-        <img id="myimage" src="sanrof=v(1).png" width="400" height="300" alt="تصویر نمونه">
-        <div id="myresult" class="img-zoom-result"></div>
-    </div>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>افکت زوم روی تصویر</title>
 
-    <script src="script.js"></script>
+  <style>
+    * { box-sizing: border-box; }
+
+    .img-zoom-container {
+      position: relative;
+    }
+
+    .img-zoom-lens {
+      position: absolute;
+      border: 1px solid #d4d4d4;
+      width: 40px;
+      height: 40px;
+    }
+
+    .img-zoom-result {
+      border: 1px solid #d4d4d4;
+      width: 300px;
+      height: 300px;
+    }
+  </style>
+</head>
+
+<body>
+  <h2>افکت زوم روی تصویر</h2>
+
+  <div class="img-zoom-container">
+    <img id="myimage" src="sanrof=v(1).png" width="400" height="300" alt="تصویر نمونه">
+    <div id="myresult" class="img-zoom-result"></div>
+  </div>
+
+  <script>
+    function imageZoom(imgID, resultID) {
+      var img = document.getElementById(imgID);
+      var result = document.getElementById(resultID);
+
+      var lens = document.createElement("DIV");
+      lens.setAttribute("class", "img-zoom-lens");
+      img.parentElement.insertBefore(lens, img);
+
+      var cx = result.offsetWidth / lens.offsetWidth;
+      var cy = result.offsetHeight / lens.offsetHeight;
+
+      result.style.backgroundImage = "url('" + img.src + "')";
+      result.style.backgroundSize = (img.width * cx) + "px " + (img.height * cy) + "px";
+
+      lens.addEventListener("mousemove", moveLens);
+      img.addEventListener("mousemove", moveLens);
+      lens.addEventListener("touchmove", moveLens);
+      img.addEventListener("touchmove", moveLens);
+
+      function moveLens(e) {
+        e.preventDefault();
+        var pos = getCursorPos(e);
+        var x = pos.x - lens.offsetWidth / 2;
+        var y = pos.y - lens.offsetHeight / 2;
+
+        if (x > img.width - lens.offsetWidth) { x = img.width - lens.offsetWidth; }
+        if (x < 0) { x = 0; }
+        if (y > img.height - lens.offsetHeight) { y = img.height - lens.offsetHeight; }
+        if (y < 0) { y = 0; }
+
+        lens.style.left = x + "px";
+        lens.style.top = y + "px";
+
+        result.style.backgroundPosition = "-" + (x * cx) + "px -" + (y * cy) + "px";
+      }
+
+      function getCursorPos(e) {
+        var a = img.getBoundingClientRect();
+        var x = e.pageX - a.left - window.pageXOffset;
+        var y = e.pageY - a.top - window.pageYOffset;
+        return { x: x, y: y };
+      }
+    }
+
+    imageZoom("myimage", "sanrof=v(1).png");
+  </script>
 </body>
 </html>
-<iframe
-    src="https://www.canva.com/design/DAG1lH3AgGQ/yZ9jHA7zafOkr69duZ99pQ/edit?utm_content=DAG1lH3AgGQ&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton"
-    width="100%"
-    height="600"
-    style=border:none;">
-</iframe>
-    
